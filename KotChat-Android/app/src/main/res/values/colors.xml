@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="blue_primary_light">#26A69A</color>
+    <color name="blue_primary">#00796B</color>
+    <color name="blue_primary_dark">#004D40</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="bg_grey">#282828</color>
+    <color name="reply_grey">#424242</color>
+
+    <color name="transition_green">#00796B</color>
+    <color name="transition_teal">#0097A7</color>
+    <color name="transition_blue">#0288D1</color>
+</resources>

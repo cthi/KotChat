@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/item_message_recv_bubble"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="start"
+    android:layout_margin="4dp"
+    android:background="@drawable/received_bubble"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/item_message_recv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-light"
+        android:maxWidth="200dp"
+        android:padding="4dp"
+        android:textColor="@color/white"
+        android:textSize="16sp">
+    </TextView>
+
+    <TextView
+        android:id="@+id/item_message_recv_sender"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-light"
+        android:padding="4dp"
+        android:textColor="@color/white"
+        android:textSize="12sp"/>
+</LinearLayout>

@@ -1,0 +1,12 @@
+<resources>
+    <style name="KotTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/blue_primary</item>
+        <item name="colorPrimaryDark">@color/blue_primary_dark</item>
+        <item name="colorAccent">@color/white</item>
+        <item name="android:colorBackground">@color/bg_grey</item>
+    </style>
+
+    <style name="KotTheme.Login" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorAccent">@color/white</item>
+    </style>
+</resources>
