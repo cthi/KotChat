@@ -1,0 +1,9 @@
+{
+  "name": "kotchat-server",
+  "version": "0.0.1",
+  "description": "server for kotchat",
+  "dependencies": {
+    "express": "4.10.2",
+    "socket.io": "1.2.0"
+  }
+}
