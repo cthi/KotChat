@@ -86,10 +86,13 @@ public class ChatService : Service() {
         })
 
         mSocket?.on("username set", { args ->
-            val resultJson = JSONObject(args[0].toString())
+            val resultJson = args[0].toString()
 
-            if (resultJson.getBoolean("result")) {
-                LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(ServerJoinActivity.START_CHAT_VIEW))
+            if (JSONObject(resultJson).getBoolean("result")) {
+                val intent = Intent(ServerJoinActivity.START_CHAT_VIEW)
+
+                intent.putExtra("rooms", resultJson)
+                LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
             }
         })
     }

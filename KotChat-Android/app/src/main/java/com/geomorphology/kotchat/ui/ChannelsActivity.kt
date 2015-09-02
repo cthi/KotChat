@@ -3,25 +3,29 @@ package com.geomorphology.kotchat.ui
 import android.content.res.Configuration
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.support.design.widget.NavigationView
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import android.util.Log
+import android.view.Menu
 import android.widget.EditText
 import android.widget.ImageButton
 import com.geomorphology.kotchat.R
-import com.geomorphology.kotchat.adapter.ChannelAdapter
 import com.geomorphology.kotchat.adapter.MessageAdapter
 import com.geomorphology.kotchat.model.Channel
 import com.geomorphology.kotchat.model.Message
+import com.geomorphology.kotchat.model.Room
 import com.geomorphology.kotchat.transport.MessageListObservable
+import org.json.JSONObject
 import java.util.ArrayList
 import kotlin.properties.Delegates
 
-public class ChannelsActivity : BaseServiceActivity(), OnChannelSwap {
+public class ChannelsActivity : BaseServiceActivity() {
     private var mToolbar: Toolbar by Delegates.notNull()
-    private var mNavView: RecyclerView by Delegates.notNull()
+    private var mNavView: NavigationView by Delegates.notNull()
     private var mDrawerLayout: DrawerLayout by Delegates.notNull()
     private var mDrawerToggle: ActionBarDrawerToggle by Delegates.notNull()
     private var mRecyclerView: RecyclerView by Delegates.notNull()
@@ -43,7 +47,7 @@ public class ChannelsActivity : BaseServiceActivity(), OnChannelSwap {
 
     private fun bindViews() {
         mToolbar = findViewById(R.id.toolbar) as Toolbar
-        mNavView = findViewById(R.id.drawer_list) as RecyclerView
+        mNavView = findViewById(R.id.drawer_list) as NavigationView
         mDrawerLayout = findViewById(R.id.drawer_layout) as DrawerLayout
         mRecyclerView = findViewById(R.id.channel_rv) as RecyclerView
         mSendText = findViewById(R.id.item_message_sent) as EditText
@@ -67,13 +71,22 @@ public class ChannelsActivity : BaseServiceActivity(), OnChannelSwap {
         mDrawerToggle.setDrawerIndicatorEnabled(true)
         mDrawerLayout.setDrawerListener(mDrawerToggle)
 
-        // Mock
-        var list = listOf(Channel("#Test1", 1), Channel("#Test2", 2), Channel("#Test3", 3))
-        var channelAdapter = ChannelAdapter(this, this, list)
-        //
+        val roomsAsJsonList = JSONObject(getIntent().getStringExtra("rooms")).getJSONArray("rooms")
+        val rooms = Array(roomsAsJsonList.length(), {i ->
+            Room(roomsAsJsonList.getJSONObject(i).getString("room"),
+                    roomsAsJsonList.getJSONObject(i).getInt("id")) })
 
-        mNavView.setLayoutManager(LinearLayoutManager(this))
-        mNavView.setAdapter(channelAdapter)
+        val menu = mNavView.getMenu()
+
+        for (i in rooms.indices) {
+            menu.add(Menu.NONE, i, Menu.NONE, rooms[i].room)
+        }
+
+        mNavView.setNavigationItemSelectedListener { menuItem ->
+            mService.joinRoom(rooms.get(menuItem.getItemId()).roomId)
+            mDrawerLayout.closeDrawers()
+            true
+        }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -110,12 +123,4 @@ public class ChannelsActivity : BaseServiceActivity(), OnChannelSwap {
         }
 
     }
-
-    override fun onChannelSwap(channelId: Int) {
-        mService.joinRoom(channelId)
-    }
-}
-
-interface OnChannelSwap {
-    fun onChannelSwap(channelId: Int)
 }
