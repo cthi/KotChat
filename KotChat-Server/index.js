@@ -1,11 +1,18 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var async = require('async');
 
 var users = {};
 var numUsers = 0;
-var rooms = ['Sports', 'TV', 'World News', 'Programming', 'Android', 'Apple'];
-var roomJoinMsgs = ['Welcome to Sports', 'Welcome to TV', 'Welcome to Programming', 'Welcome to Android', 'Welcome to Apple']
+var rooms = [{room : 'Sports', id : 0},
+ {room : 'TV', id : 1},
+ {room : 'World News', id : 2},
+ {room : 'Programming', id : 3},
+ {room : 'Android', id : 4},
+ {room : 'Apple', id : 5}];
+
+var roomJoinMsgs = ['Welcome to Sports', 'Welcome to TV', 'Welcome to World News', 'Welcome to Programming', 'Welcome to Android', 'Welcome to Apple']
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
@@ -23,44 +30,56 @@ io.on('connection', function(socket){
 		users[msg.username] = msg.username
 
 		socket.emit('username set', {
-			result : true
+			result : true,
+			rooms : rooms
 		})
 	});
 
 	socket.on('join room', function (msg){
-		socket.roomNum = msg.roomNum;
-		socket.join(rooms[socket.roomNum]);
+		async.series([
+			function(callback) {
+				console.log(socket.roomNum);
 
-		socket.emit('room join message', {
-			message : roomJoinMsgs[socket.roomNum]
-		});
+				if (typeof socket.roomNum !== 'undefined') {
+					socket.leave(socket.roomNum);
+					
+					io.to(socket.roomNum).emit('user left', {
+  						message : socket.username
+  					});
 
-		io.to(rooms[socket.roomNum]).emit('user joined', {
-			message : socket.username
-		});
+  					socket.roomNum = undefined;
+				}
+
+				callback();
+			},
+			function (callback) {
+				socket.roomNum = msg.roomNum;
+				socket.join(socket.roomNum);
+
+				socket.emit('room join message', {
+					message : roomJoinMsgs[socket.roomNum]
+				});
+
+				io.to(socket.roomNum).emit('user joined', {
+					message : socket.username
+				});
+
+				callback()
+			}
+		]);
 	});
 
 	socket.on('send message', function(msg){
 		if (socket.username) {
-			socket.broadcast.to(rooms[socket.roomNum]).emit('chat message', {
+			socket.broadcast.to(socket.roomNum).emit('chat message', {
 				message : msg.message,
 				sender : socket.username
 			});
 		}
   	});
 
-	socket.on('leave room', function(){
-		var roomNum = socket.roomNum;
-		socket.leave(rooms[socket.roomNum])
-		socket.roomNum = undefined;
-
-  		io.to(rooms[roomNum]).emit('user left', {
-  			message : socket.username
-  		});
-	});
-
   	socket.on('disconnect', function(){
-  		io.to(rooms[socket.roomNum]).emit('user left', {
+  		io.to(socket.roomNum).emit('user left', {
   			message : socket.username
   		});
   	});
