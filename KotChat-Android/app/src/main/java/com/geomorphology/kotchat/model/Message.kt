@@ -1,6 +1,4 @@
 package com.geomorphology.kotchat.model
 
-public open class Message(message : String, sender : String) {
-    public var message : String = message
-    public var sender : String = sender
-}
+data open class Message(val message : String,
+                        val sender : String)

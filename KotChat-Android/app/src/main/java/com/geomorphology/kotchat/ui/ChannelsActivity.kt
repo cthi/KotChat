@@ -15,7 +15,6 @@ import android.widget.EditText
 import android.widget.ImageButton
 import com.geomorphology.kotchat.R
 import com.geomorphology.kotchat.adapter.MessageAdapter
-import com.geomorphology.kotchat.model.Channel
 import com.geomorphology.kotchat.model.Message
 import com.geomorphology.kotchat.model.Room
 import com.geomorphology.kotchat.transport.MessageListObservable

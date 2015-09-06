@@ -1,6 +1,4 @@
 package com.geomorphology.kotchat.model
 
-public class Room(room : String, roomId : Int) {
-    public var room : String = room
-    public var roomId : Int = roomId
-}
+data class Room(val room : String,
+                val roomId : Int)
