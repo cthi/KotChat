@@ -9,12 +9,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.geomorphology.kotchat.R
 import com.geomorphology.kotchat.model.Message
-import com.geomorphology.kotchat.model.RecvMessage
-import com.geomorphology.kotchat.model.SentMessage
-import com.geomorphology.kotchat.model.SysMessage
+import com.geomorphology.kotchat.model.MessageType
 
 public class MessageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private val TYPE_SENT = 0
+    private val TYPE_SEND = 0
     private val TYPE_RECV = 1
     private val TYPE_SYS = 2
 
@@ -38,12 +36,11 @@ public class MessageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     override fun getItemViewType(position: Int): Int {
-        when (mMessages.get(position)) {
-            is RecvMessage -> return TYPE_RECV
-            is SentMessage -> return TYPE_SENT
-            is SysMessage -> return TYPE_SYS
+        when (mMessages.get(position).type) {
+            MessageType.RECV -> return TYPE_RECV
+            MessageType.SEND -> return TYPE_SEND
+            MessageType.SYS -> return TYPE_SYS
         }
-        return -1
     }
 
     override fun getItemCount(): Int {
@@ -51,7 +48,7 @@ public class MessageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder? {
-        if (viewType == TYPE_SENT) {
+        if (viewType == TYPE_SEND) {
             val view = LayoutInflater.from(parent?.getContext()).inflate(R.layout.item_message_sent, parent, false)
             val holder = SentHolder(view)
 
